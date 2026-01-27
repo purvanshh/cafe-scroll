@@ -31,32 +31,34 @@ export const CoffeeScroll = () => {
 
     useEffect(() => {
         const loadImages = async () => {
-            const loadedImages: HTMLImageElement[] = [];
             let loadedCount = 0;
 
-            for (let i = 1; i <= FRAME_COUNT; i++) {
-                const img = new Image();
-                // Construct filename: ezgif-frame-001.webp ... ezgif-frame-218.webp
-                const paddedIndex = i.toString().padStart(3, '0');
-                img.src = `/silent-ocean-frames/ezgif-frame-${paddedIndex}.webp`;
+            const imagePromises = Array.from({ length: FRAME_COUNT }, (_, i) => {
+                return new Promise<HTMLImageElement>((resolve, reject) => {
+                    const img = new Image();
+                    const paddedIndex = (i + 1).toString().padStart(3, '0');
+                    img.src = `/silent-ocean-frames/ezgif-frame-${paddedIndex}.webp`;
 
-                await new Promise((resolve) => {
                     img.onload = () => {
                         loadedCount++;
-                        console.log(`[CoffeeScroll] Loaded: ${img.src}`);
                         setLoadProgress((loadedCount / FRAME_COUNT) * 100);
-                        resolve(true);
+                        resolve(img);
                     };
+
                     img.onerror = (e) => {
                         console.error(`[CoffeeScroll] Failed to load: ${img.src}`, e);
-                        resolve(true);
+                        reject(e);
                     };
                 });
-                loadedImages.push(img);
-            }
+            });
 
-            setImages(loadedImages);
-            setIsLoaded(true);
+            try {
+                const loadedImages = await Promise.all(imagePromises);
+                setImages(loadedImages);
+                setIsLoaded(true);
+            } catch (error) {
+                console.error("Some images failed to load", error);
+            }
         };
 
         loadImages();
