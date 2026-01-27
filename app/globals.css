@@ -1,26 +1,74 @@
 @import "tailwindcss";
 
+@theme {
+  --color-bg-light: #F3DFC6;
+  --color-bg-dark: #1A1A1A;
+  --color-brown-primary: #7A4A38;
+  --color-brown-muted: #5A463D;
+  --color-text-dark: #2A1E1A;
+  --color-text-light: #EADCCB;
+  --color-accent-beige: #D6BFA6;
+  --color-button-border: rgba(234, 220, 203, 0.4);
+
+  --font-alfa: var(--font-alfa-slab-one);
+  --font-archivo: var(--font-archivo);
+  --font-source: var(--font-source-sans);
+
+  /* Lumina Variables */
+  --color-accent: #d4af37;
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1rem;
+}
+
+/* Base resets and smooth scrolling */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-bg-light);
+  color: var(--color-text-dark);
+  font-family: var(--font-source);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography Defaults */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-alfa);
+}
+
+button,
+.nav-link,
+.btn-text {
+  font-family: var(--font-archivo);
+}
+
+/* Premium Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(122, 74, 56, 0.3);
+  /* Brown primary loose opacity */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(122, 74, 56, 0.6);
+}
+
+/* Utility for section transitions if needed */
+.section-transition {
+  transition: background-color 0.5s ease-in-out;
 }
