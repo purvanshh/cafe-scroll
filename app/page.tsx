@@ -4,6 +4,9 @@ import { BrandStory } from "./components/home/BrandStory";
 import { Gallery } from "./components/home/Gallery";
 import { Locations } from "./components/home/Locations";
 import { ProductShowcase } from "./components/home/ProductShowcase";
+import { Shop } from "./components/home/Shop";
+import { About } from "./components/home/About";
+import { Blog } from "./components/home/Blog";
 
 export default function Home() {
   return (
@@ -11,9 +14,13 @@ export default function Home() {
       <CoffeeScroll />
       <Features />
       <ProductShowcase />
+      <Shop />
       <BrandStory />
+      <About />
       <Gallery />
+      <Blog />
       <Locations />
     </div>
   );
 }
+

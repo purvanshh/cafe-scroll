@@ -123,7 +123,7 @@ export const CoffeeScroll = () => {
     }, [isLoaded, images, frameIndex]);
 
     return (
-        <div ref={containerRef} className="relative h-[600vh] bg-bg-dark">
+        <div ref={containerRef} id="home" className="relative h-[600vh] bg-bg-dark">
             {!isLoaded && (
                 <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-bg-dark text-white/90">
                     <Loader />
