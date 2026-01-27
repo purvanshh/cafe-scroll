@@ -4,30 +4,98 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import gsap from 'gsap';
 
+// --- STATIC CONFIGURATION (Optimized: Moved outside component) ---
+const SLIDER_CONFIG: any = {
+    settings: {
+        transitionDuration: 2.5, autoSlideSpeed: 5000, currentEffect: "wood", currentEffectPreset: "Default",
+        globalIntensity: 1.0, speedMultiplier: 1.0, distortionStrength: 1.0, colorEnhancement: 1.0,
+        glassRefractionStrength: 1.0, glassChromaticAberration: 1.0, glassBubbleClarity: 1.0, glassEdgeGlow: 1.0, glassLiquidFlow: 1.0,
+        frostIntensity: 1.5, frostCrystalSize: 1.0, frostIceCoverage: 1.0, frostTemperature: 1.0, frostTexture: 1.0,
+        rippleFrequency: 25.0, rippleAmplitude: 0.08, rippleWaveSpeed: 1.0, rippleRippleCount: 1.0, rippleDecay: 1.0,
+        plasmaIntensity: 1.2, plasmaSpeed: 0.8, plasmaEnergyIntensity: 0.4, plasmaContrastBoost: 0.3, plasmaTurbulence: 1.0,
+        timeshiftDistortion: 1.6, timeshiftBlur: 1.5, timeshiftFlow: 1.4, timeshiftChromatic: 1.5, timeshiftTurbulence: 1.4
+    },
+    effectPresets: {
+        glass: { Subtle: { glassRefractionStrength: 0.6, glassChromaticAberration: 0.5, glassBubbleClarity: 1.3, glassEdgeGlow: 0.7, glassLiquidFlow: 0.8 }, Default: { glassRefractionStrength: 1.0, glassChromaticAberration: 1.0, glassBubbleClarity: 1.0, glassEdgeGlow: 1.0, glassLiquidFlow: 1.0 }, Crystal: { glassRefractionStrength: 1.5, glassChromaticAberration: 1.8, glassBubbleClarity: 0.7, glassEdgeGlow: 1.4, glassLiquidFlow: 0.5 }, Liquid: { glassRefractionStrength: 0.8, glassChromaticAberration: 0.4, glassBubbleClarity: 1.2, glassEdgeGlow: 0.8, glassLiquidFlow: 1.8 } },
+        frost: { Light: { frostIntensity: 0.8, frostCrystalSize: 1.3, frostIceCoverage: 0.6, frostTemperature: 0.7, frostTexture: 0.8 }, Default: { frostIntensity: 1.5, frostCrystalSize: 1.0, frostIceCoverage: 1.0, frostTemperature: 1.0, frostTexture: 1.0 }, Heavy: { frostIntensity: 2.2, frostCrystalSize: 0.7, frostIceCoverage: 1.4, frostTemperature: 1.5, frostTexture: 1.3 }, Arctic: { frostIntensity: 2.8, frostCrystalSize: 0.5, frostIceCoverage: 1.8, frostTemperature: 2.0, frostTexture: 1.6 } },
+        ripple: { Gentle: { rippleFrequency: 15.0, rippleAmplitude: 0.05, rippleWaveSpeed: 0.7, rippleRippleCount: 0.8, rippleDecay: 1.2 }, Default: { rippleFrequency: 25.0, rippleAmplitude: 0.08, rippleWaveSpeed: 1.0, rippleRippleCount: 1.0, rippleDecay: 1.0 }, Strong: { rippleFrequency: 35.0, rippleAmplitude: 0.12, rippleWaveSpeed: 1.4, rippleRippleCount: 1.3, rippleDecay: 0.8 }, Tsunami: { rippleFrequency: 45.0, rippleAmplitude: 0.18, rippleWaveSpeed: 1.8, rippleRippleCount: 1.6, rippleDecay: 0.6 } },
+        plasma: { Calm: { plasmaIntensity: 0.8, plasmaSpeed: 0.5, plasmaEnergyIntensity: 0.2, plasmaContrastBoost: 0.1, plasmaTurbulence: 0.6 }, Default: { plasmaIntensity: 1.2, plasmaSpeed: 0.8, plasmaEnergyIntensity: 0.4, plasmaContrastBoost: 0.3, plasmaTurbulence: 1.0 }, Storm: { plasmaIntensity: 1.8, plasmaSpeed: 1.3, plasmaEnergyIntensity: 0.7, plasmaContrastBoost: 0.5, plasmaTurbulence: 1.5 }, Nuclear: { plasmaIntensity: 2.5, plasmaSpeed: 1.8, plasmaEnergyIntensity: 1.0, plasmaContrastBoost: 0.8, plasmaTurbulence: 2.0 } },
+        timeshift: { Subtle: { timeshiftDistortion: 0.5, timeshiftBlur: 0.6, timeshiftFlow: 0.5, timeshiftChromatic: 0.4, timeshiftTurbulence: 0.6 }, Default: { timeshiftDistortion: 1.6, timeshiftBlur: 1.5, timeshiftFlow: 1.4, timeshiftChromatic: 1.5, timeshiftTurbulence: 1.4 }, Intense: { timeshiftDistortion: 2.2, timeshiftBlur: 2.0, timeshiftFlow: 2.0, timeshiftChromatic: 2.2, timeshiftTurbulence: 2.0 }, Dreamlike: { timeshiftDistortion: 2.8, timeshiftBlur: 2.5, timeshiftFlow: 2.5, timeshiftChromatic: 2.6, timeshiftTurbulence: 2.5 } }
+    }
+};
+
+const SLIDES = [
+    { title: "Pure Extraction", description: "Precision brewing for the perfect cup.", media: "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=2671&auto=format&fit=crop" },
+    { title: "Artisan Roast", description: "Small batches, mastered daily.", media: "https://images.unsplash.com/photo-1447933601403-0c6688de566e?q=80&w=2561&auto=format&fit=crop" },
+    { title: "Cold Brew", description: "Steeped for 24 hours of smoothness.", media: "https://images.unsplash.com/photo-1504630083234-14187a9df0f5?q=80&w=2670&auto=format&fit=crop" },
+    { title: "Morning Light", description: "Start your day with golden perfection.", media: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop" },
+    { title: "Espresso Art", description: "A canvas of crema and contrast.", media: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=2574&auto=format&fit=crop" },
+    { title: "Bean Journey", description: "From farm to cup, handled with care.", media: "https://images.unsplash.com/photo-1559496417-e7f25cb247f3?q=80&w=2574&auto=format&fit=crop" }
+];
+
+// --- SHADERS ---
+const VERTEX_SHADER = `varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
+const FRAGMENT_SHADER = `
+    uniform sampler2D uTexture1, uTexture2;
+    uniform float uProgress;
+    uniform vec2 uResolution, uTexture1Size, uTexture2Size;
+    uniform int uEffectType;
+    uniform float uGlobalIntensity, uSpeedMultiplier, uDistortionStrength, uColorEnhancement;
+    uniform float uGlassRefractionStrength, uGlassChromaticAberration, uGlassBubbleClarity, uGlassEdgeGlow, uGlassLiquidFlow;
+    varying vec2 vUv;
+
+    vec2 getCoverUV(vec2 uv, vec2 textureSize) {
+        vec2 s = uResolution / textureSize;
+        float scale = max(s.x, s.y);
+        vec2 scaledSize = textureSize * scale;
+        vec2 offset = (uResolution - scaledSize) * 0.5;
+        return (uv * uResolution - offset) / scaledSize;
+    }
+    float noise(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+    
+    vec4 glassEffect(vec2 uv, float progress) {
+        float time = progress * 5.0 * uSpeedMultiplier;
+        vec2 uv1 = getCoverUV(uv, uTexture1Size); vec2 uv2 = getCoverUV(uv, uTexture2Size);
+        float maxR = length(uResolution) * 0.85; float br = progress * maxR;
+        vec2 p = uv * uResolution; vec2 c = uResolution * 0.5;
+        float d = length(p - c); float nd = d / max(br, 0.001);
+        float param = smoothstep(br + 3.0, br - 3.0, d); // Inside circle
+        vec4 img;
+        if (param > 0.0) {
+                float ro = 0.08 * uGlassRefractionStrength * uDistortionStrength * uGlobalIntensity * pow(smoothstep(0.3 * uGlassBubbleClarity, 1.0, nd), 1.5);
+                vec2 dir = (d > 0.0) ? (p - c) / d : vec2(0.0);
+                vec2 distUV = uv2 - dir * ro;
+                distUV += vec2(sin(time + nd * 10.0), cos(time * 0.8 + nd * 8.0)) * 0.015 * uGlassLiquidFlow * uSpeedMultiplier * nd * param;
+                float ca = 0.02 * uGlassChromaticAberration * uGlobalIntensity * pow(smoothstep(0.3, 1.0, nd), 1.2);
+                img = vec4(texture2D(uTexture2, distUV + dir * ca * 1.2).r, texture2D(uTexture2, distUV + dir * ca * 0.2).g, texture2D(uTexture2, distUV - dir * ca * 0.8).b, 1.0);
+                if (uGlassEdgeGlow > 0.0) {
+                float rim = smoothstep(0.95, 1.0, nd) * (1.0 - smoothstep(1.0, 1.01, nd));
+                img.rgb += rim * 0.08 * uGlassEdgeGlow * uGlobalIntensity;
+                }
+        } else { img = texture2D(uTexture2, uv2); }
+        vec4 oldImg = texture2D(uTexture1, uv1);
+        if (progress > 0.95) img = mix(img, texture2D(uTexture2, uv2), (progress - 0.95) / 0.05);
+        return mix(oldImg, img, param);
+    }
+    
+    vec4 frostEffect(vec2 uv, float progress) { return mix(texture2D(uTexture1, getCoverUV(uv, uTexture1Size)), texture2D(uTexture2, getCoverUV(uv, uTexture2Size)), progress); }
+    vec4 rippleEffect(vec2 uv, float progress) { return mix(texture2D(uTexture1, getCoverUV(uv, uTexture1Size)), texture2D(uTexture2, getCoverUV(uv, uTexture2Size)), progress); }
+    vec4 plasmaEffect(vec2 uv, float progress) { return mix(texture2D(uTexture1, getCoverUV(uv, uTexture1Size)), texture2D(uTexture2, getCoverUV(uv, uTexture2Size)), progress); }
+    vec4 timeshiftEffect(vec2 uv, float progress) { return mix(texture2D(uTexture1, getCoverUV(uv, uTexture1Size)), texture2D(uTexture2, getCoverUV(uv, uTexture2Size)), progress); }
+
+    void main() {
+        if (uEffectType == 0) gl_FragColor = glassEffect(vUv, uProgress);
+        else if (uEffectType == 1) gl_FragColor = frostEffect(vUv, uProgress);
+        else if (uEffectType == 2) gl_FragColor = rippleEffect(vUv, uProgress);
+        else if (uEffectType == 3) gl_FragColor = plasmaEffect(vUv, uProgress);
+        else gl_FragColor = timeshiftEffect(vUv, uProgress);
+    }
+`;
+
 export function Component() {
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        // --- MAIN LOGIC ---
-        const SLIDER_CONFIG: any = {
-            settings: {
-                transitionDuration: 2.5, autoSlideSpeed: 5000, currentEffect: "wood", currentEffectPreset: "Default",
-                globalIntensity: 1.0, speedMultiplier: 1.0, distortionStrength: 1.0, colorEnhancement: 1.0,
-                glassRefractionStrength: 1.0, glassChromaticAberration: 1.0, glassBubbleClarity: 1.0, glassEdgeGlow: 1.0, glassLiquidFlow: 1.0,
-                frostIntensity: 1.5, frostCrystalSize: 1.0, frostIceCoverage: 1.0, frostTemperature: 1.0, frostTexture: 1.0,
-                rippleFrequency: 25.0, rippleAmplitude: 0.08, rippleWaveSpeed: 1.0, rippleRippleCount: 1.0, rippleDecay: 1.0,
-                plasmaIntensity: 1.2, plasmaSpeed: 0.8, plasmaEnergyIntensity: 0.4, plasmaContrastBoost: 0.3, plasmaTurbulence: 1.0,
-                timeshiftDistortion: 1.6, timeshiftBlur: 1.5, timeshiftFlow: 1.4, timeshiftChromatic: 1.5, timeshiftTurbulence: 1.4
-            },
-            effectPresets: {
-                glass: { Subtle: { glassRefractionStrength: 0.6, glassChromaticAberration: 0.5, glassBubbleClarity: 1.3, glassEdgeGlow: 0.7, glassLiquidFlow: 0.8 }, Default: { glassRefractionStrength: 1.0, glassChromaticAberration: 1.0, glassBubbleClarity: 1.0, glassEdgeGlow: 1.0, glassLiquidFlow: 1.0 }, Crystal: { glassRefractionStrength: 1.5, glassChromaticAberration: 1.8, glassBubbleClarity: 0.7, glassEdgeGlow: 1.4, glassLiquidFlow: 0.5 }, Liquid: { glassRefractionStrength: 0.8, glassChromaticAberration: 0.4, glassBubbleClarity: 1.2, glassEdgeGlow: 0.8, glassLiquidFlow: 1.8 } },
-                frost: { Light: { frostIntensity: 0.8, frostCrystalSize: 1.3, frostIceCoverage: 0.6, frostTemperature: 0.7, frostTexture: 0.8 }, Default: { frostIntensity: 1.5, frostCrystalSize: 1.0, frostIceCoverage: 1.0, frostTemperature: 1.0, frostTexture: 1.0 }, Heavy: { frostIntensity: 2.2, frostCrystalSize: 0.7, frostIceCoverage: 1.4, frostTemperature: 1.5, frostTexture: 1.3 }, Arctic: { frostIntensity: 2.8, frostCrystalSize: 0.5, frostIceCoverage: 1.8, frostTemperature: 2.0, frostTexture: 1.6 } },
-                ripple: { Gentle: { rippleFrequency: 15.0, rippleAmplitude: 0.05, rippleWaveSpeed: 0.7, rippleRippleCount: 0.8, rippleDecay: 1.2 }, Default: { rippleFrequency: 25.0, rippleAmplitude: 0.08, rippleWaveSpeed: 1.0, rippleRippleCount: 1.0, rippleDecay: 1.0 }, Strong: { rippleFrequency: 35.0, rippleAmplitude: 0.12, rippleWaveSpeed: 1.4, rippleRippleCount: 1.3, rippleDecay: 0.8 }, Tsunami: { rippleFrequency: 45.0, rippleAmplitude: 0.18, rippleWaveSpeed: 1.8, rippleRippleCount: 1.6, rippleDecay: 0.6 } },
-                plasma: { Calm: { plasmaIntensity: 0.8, plasmaSpeed: 0.5, plasmaEnergyIntensity: 0.2, plasmaContrastBoost: 0.1, plasmaTurbulence: 0.6 }, Default: { plasmaIntensity: 1.2, plasmaSpeed: 0.8, plasmaEnergyIntensity: 0.4, plasmaContrastBoost: 0.3, plasmaTurbulence: 1.0 }, Storm: { plasmaIntensity: 1.8, plasmaSpeed: 1.3, plasmaEnergyIntensity: 0.7, plasmaContrastBoost: 0.5, plasmaTurbulence: 1.5 }, Nuclear: { plasmaIntensity: 2.5, plasmaSpeed: 1.8, plasmaEnergyIntensity: 1.0, plasmaContrastBoost: 0.8, plasmaTurbulence: 2.0 } },
-                timeshift: { Subtle: { timeshiftDistortion: 0.5, timeshiftBlur: 0.6, timeshiftFlow: 0.5, timeshiftChromatic: 0.4, timeshiftTurbulence: 0.6 }, Default: { timeshiftDistortion: 1.6, timeshiftBlur: 1.5, timeshiftFlow: 1.4, timeshiftChromatic: 1.5, timeshiftTurbulence: 1.4 }, Intense: { timeshiftDistortion: 2.2, timeshiftBlur: 2.0, timeshiftFlow: 2.0, timeshiftChromatic: 2.2, timeshiftTurbulence: 2.0 }, Dreamlike: { timeshiftDistortion: 2.8, timeshiftBlur: 2.5, timeshiftFlow: 2.5, timeshiftChromatic: 2.6, timeshiftTurbulence: 2.5 } }
-            }
-        };
-
         // --- GLOBAL STATE ---
         let currentSlideIndex = 0;
         let isTransitioning = false;
@@ -42,74 +110,6 @@ export function Component() {
         const SLIDE_DURATION = () => SLIDER_CONFIG.settings.autoSlideSpeed;
         const PROGRESS_UPDATE_INTERVAL = 50;
         const TRANSITION_DURATION = () => SLIDER_CONFIG.settings.transitionDuration;
-
-        const slides = [
-            { title: "Pure Extraction", description: "Precision brewing for the perfect cup.", media: "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=2671&auto=format&fit=crop" },
-            { title: "Artisan Roast", description: "Small batches, mastered daily.", media: "https://images.unsplash.com/photo-1447933601403-0c6688de566e?q=80&w=2561&auto=format&fit=crop" },
-            { title: "Cold Brew", description: "Steeped for 24 hours of smoothness.", media: "https://images.unsplash.com/photo-1504630083234-14187a9df0f5?q=80&w=2670&auto=format&fit=crop" },
-            { title: "Morning Light", description: "Start your day with golden perfection.", media: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop" },
-            { title: "Espresso Art", description: "A canvas of crema and contrast.", media: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=2574&auto=format&fit=crop" },
-            { title: "Bean Journey", description: "From farm to cup, handled with care.", media: "https://images.unsplash.com/photo-1559496417-e7f25cb247f3?q=80&w=2574&auto=format&fit=crop" }
-        ];
-
-        // --- SHADERS ---
-        const vertexShader = `varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
-        const fragmentShader = `
-            uniform sampler2D uTexture1, uTexture2;
-            uniform float uProgress;
-            uniform vec2 uResolution, uTexture1Size, uTexture2Size;
-            uniform int uEffectType;
-            uniform float uGlobalIntensity, uSpeedMultiplier, uDistortionStrength, uColorEnhancement;
-            uniform float uGlassRefractionStrength, uGlassChromaticAberration, uGlassBubbleClarity, uGlassEdgeGlow, uGlassLiquidFlow;
-            varying vec2 vUv;
-
-            vec2 getCoverUV(vec2 uv, vec2 textureSize) {
-                vec2 s = uResolution / textureSize;
-                float scale = max(s.x, s.y);
-                vec2 scaledSize = textureSize * scale;
-                vec2 offset = (uResolution - scaledSize) * 0.5;
-                return (uv * uResolution - offset) / scaledSize;
-            }
-            float noise(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
-            
-            vec4 glassEffect(vec2 uv, float progress) {
-                float time = progress * 5.0 * uSpeedMultiplier;
-                vec2 uv1 = getCoverUV(uv, uTexture1Size); vec2 uv2 = getCoverUV(uv, uTexture2Size);
-                float maxR = length(uResolution) * 0.85; float br = progress * maxR;
-                vec2 p = uv * uResolution; vec2 c = uResolution * 0.5;
-                float d = length(p - c); float nd = d / max(br, 0.001);
-                float param = smoothstep(br + 3.0, br - 3.0, d); // Inside circle
-                vec4 img;
-                if (param > 0.0) {
-                     float ro = 0.08 * uGlassRefractionStrength * uDistortionStrength * uGlobalIntensity * pow(smoothstep(0.3 * uGlassBubbleClarity, 1.0, nd), 1.5);
-                     vec2 dir = (d > 0.0) ? (p - c) / d : vec2(0.0);
-                     vec2 distUV = uv2 - dir * ro;
-                     distUV += vec2(sin(time + nd * 10.0), cos(time * 0.8 + nd * 8.0)) * 0.015 * uGlassLiquidFlow * uSpeedMultiplier * nd * param;
-                     float ca = 0.02 * uGlassChromaticAberration * uGlobalIntensity * pow(smoothstep(0.3, 1.0, nd), 1.2);
-                     img = vec4(texture2D(uTexture2, distUV + dir * ca * 1.2).r, texture2D(uTexture2, distUV + dir * ca * 0.2).g, texture2D(uTexture2, distUV - dir * ca * 0.8).b, 1.0);
-                     if (uGlassEdgeGlow > 0.0) {
-                        float rim = smoothstep(0.95, 1.0, nd) * (1.0 - smoothstep(1.0, 1.01, nd));
-                        img.rgb += rim * 0.08 * uGlassEdgeGlow * uGlobalIntensity;
-                     }
-                } else { img = texture2D(uTexture2, uv2); }
-                vec4 oldImg = texture2D(uTexture1, uv1);
-                if (progress > 0.95) img = mix(img, texture2D(uTexture2, uv2), (progress - 0.95) / 0.05);
-                return mix(oldImg, img, param);
-            }
-            
-            vec4 frostEffect(vec2 uv, float progress) { return mix(texture2D(uTexture1, getCoverUV(uv, uTexture1Size)), texture2D(uTexture2, getCoverUV(uv, uTexture2Size)), progress); }
-            vec4 rippleEffect(vec2 uv, float progress) { return mix(texture2D(uTexture1, getCoverUV(uv, uTexture1Size)), texture2D(uTexture2, getCoverUV(uv, uTexture2Size)), progress); }
-            vec4 plasmaEffect(vec2 uv, float progress) { return mix(texture2D(uTexture1, getCoverUV(uv, uTexture1Size)), texture2D(uTexture2, getCoverUV(uv, uTexture2Size)), progress); }
-            vec4 timeshiftEffect(vec2 uv, float progress) { return mix(texture2D(uTexture1, getCoverUV(uv, uTexture1Size)), texture2D(uTexture2, getCoverUV(uv, uTexture2Size)), progress); }
-
-            void main() {
-                if (uEffectType == 0) gl_FragColor = glassEffect(vUv, uProgress);
-                else if (uEffectType == 1) gl_FragColor = frostEffect(vUv, uProgress);
-                else if (uEffectType == 2) gl_FragColor = rippleEffect(vUv, uProgress);
-                else if (uEffectType == 3) gl_FragColor = plasmaEffect(vUv, uProgress);
-                else gl_FragColor = timeshiftEffect(vUv, uProgress);
-            }
-        `;
 
         // --- CORE FUNCTIONS ---
         const getEffectIndex = (n: string) => ({ glass: 0, frost: 1, ripple: 2, plasma: 3, timeshift: 4 } as any)[n] || 0;
@@ -138,8 +138,8 @@ export function Component() {
 
                 setTimeout(() => {
                     // Set new content
-                    titleEl.innerHTML = splitText(slides[idx].title);
-                    descEl.textContent = slides[idx].description;
+                    titleEl.innerHTML = splitText(SLIDES[idx].title);
+                    descEl.textContent = SLIDES[idx].description;
 
                     // Reset state (general reset, specific animations might override)
                     gsap.set(titleEl.children, { opacity: 0 });
@@ -213,13 +213,13 @@ export function Component() {
 
         const handleSlideChange = () => {
             if (isTransitioning || !texturesLoaded || !sliderEnabled) return;
-            navigateToSlide((currentSlideIndex + 1) % slides.length);
+            navigateToSlide((currentSlideIndex + 1) % SLIDES.length);
         };
 
         const createSlidesNavigation = () => {
             const nav = document.getElementById("slidesNav"); if (!nav) return;
             nav.innerHTML = "";
-            slides.forEach((slide, i) => {
+            SLIDES.forEach((slide, i) => {
                 const item = document.createElement("div");
                 item.className = `slide-nav-item${i === 0 ? " active" : ""}`;
                 item.dataset.slideIndex = String(i);
@@ -242,7 +242,7 @@ export function Component() {
         const quickResetProgress = (idx: number) => { const el = document.querySelectorAll(".slide-nav-item")[idx]?.querySelector(".slide-progress-fill") as HTMLElement; if (el) { el.style.transition = "width 0.2s ease-out"; el.style.width = "0%"; setTimeout(() => el.style.transition = "width 0.1s ease, opacity 0.3s ease", 200); } };
         const updateCounter = (idx: number) => {
             const sn = document.getElementById("slideNumber"); if (sn) sn.textContent = String(idx + 1).padStart(2, "0");
-            const st = document.getElementById("slideTotal"); if (st) st.textContent = String(slides.length).padStart(2, "0");
+            const st = document.getElementById("slideTotal"); if (st) st.textContent = String(SLIDES.length).padStart(2, "0");
         };
 
         const startAutoSlideTimer = () => {
@@ -264,10 +264,29 @@ export function Component() {
         const stopAutoSlideTimer = () => { if (progressAnimation) clearInterval(progressAnimation); if (autoSlideTimer) clearTimeout(autoSlideTimer); progressAnimation = null; autoSlideTimer = null; };
         const safeStartTimer = (delay = 0) => { stopAutoSlideTimer(); if (sliderEnabled && texturesLoaded) { if (delay > 0) autoSlideTimer = setTimeout(startAutoSlideTimer, delay); else startAutoSlideTimer(); } };
 
+        // --- OPTIMIZATION: Dynamic Image Loading ---
+        const getOptimizedSrc = (src: string) => {
+            if (typeof window !== 'undefined') {
+                // Breakpoints for optimization:
+                // < 768px (Mobile) -> w=800
+                // < 1280px (Tablet/Laptop) -> w=1200
+                // >= 1280px (Desktop) -> w=1920 (max for reasonable quality/size ratio)
+                const width = window.innerWidth;
+                let targetWidth = 1920;
+                if (width < 768) targetWidth = 800;
+                else if (width < 1280) targetWidth = 1200;
+
+                return src.replace(/w=\d+/, `w=${targetWidth}`);
+            }
+            return src;
+        };
+
         const loadImageTexture = (src: string) => new Promise<any>((resolve, reject) => {
             const l = new THREE.TextureLoader();
+            const optimizedSrc = getOptimizedSrc(src);
+
             l.load(
-                src,
+                optimizedSrc,
                 (t: any) => {
                     t.minFilter = t.magFilter = THREE.LinearFilter;
                     t.userData = { size: new THREE.Vector2(t.image.width, t.image.height) };
@@ -287,7 +306,10 @@ export function Component() {
             camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
             renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            // --- OPTIMIZATION: DPR Capping ---
+            // Cap DPR at 1.5 for mobile/dense screens to save GPU
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 
             shaderMaterial = new THREE.ShaderMaterial({
                 uniforms: {
@@ -303,12 +325,13 @@ export function Component() {
                     uPlasmaIntensity: { value: 1.2 }, uPlasmaSpeed: { value: 0.8 }, uPlasmaEnergyIntensity: { value: 0.4 }, uPlasmaContrastBoost: { value: 0.3 }, uPlasmaTurbulence: { value: 1.0 },
                     uTimeshiftDistortion: { value: 1.6 }, uTimeshiftBlur: { value: 1.5 }, uTimeshiftFlow: { value: 1.4 }, uTimeshiftChromatic: { value: 1.5 }, uTimeshiftTurbulence: { value: 1.4 }
                 },
-                vertexShader, fragmentShader
+                vertexShader: VERTEX_SHADER,
+                fragmentShader: FRAGMENT_SHADER
             });
             scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), shaderMaterial));
 
             // Load all textures
-            for (const s of slides) {
+            for (const s of SLIDES) {
                 try {
                     slideTextures.push(await loadImageTexture(s.media));
                 } catch {
@@ -342,8 +365,8 @@ export function Component() {
         const tEl = document.getElementById('mainTitle');
         const dEl = document.getElementById('mainDesc');
         if (tEl && dEl) {
-            tEl.innerHTML = splitText(slides[0].title);
-            dEl.textContent = slides[0].description;
+            tEl.innerHTML = splitText(SLIDES[0].title);
+            dEl.textContent = SLIDES[0].description;
             // animate initial in
             gsap.fromTo(tEl.children, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 1, stagger: 0.03, ease: "power3.out", delay: 0.5 });
             gsap.fromTo(dEl, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "power3.out", delay: 0.8 });
@@ -356,11 +379,11 @@ export function Component() {
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         prevBtn?.addEventListener('click', () => {
-            const prevIndex = (currentSlideIndex - 1 + slides.length) % slides.length;
+            const prevIndex = (currentSlideIndex - 1 + SLIDES.length) % SLIDES.length;
             navigateToSlide(prevIndex);
         });
         nextBtn?.addEventListener('click', () => {
-            const nextIndex = (currentSlideIndex + 1) % slides.length;
+            const nextIndex = (currentSlideIndex + 1) % SLIDES.length;
             navigateToSlide(nextIndex);
         });
 

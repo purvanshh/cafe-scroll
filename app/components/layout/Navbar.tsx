@@ -1,11 +1,17 @@
+'use client';
+
 import Link from 'next/link';
 import { Button } from '../ui/Button';
+import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export const Navbar = () => {
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
     return (
         <nav className="fixed top-0 left-0 right-0 z-50 w-full px-6 py-4 md:px-12 md:py-6 flex items-center justify-between backdrop-blur-md bg-bg-dark/20 border-b border-white/5 transition-all duration-300">
             {/* Logo */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 z-50 relative">
                 {/* Placeholder Icon */}
                 <div className="w-8 h-8 rounded-full border border-text-dark flex items-center justify-center overflow-hidden">
                     <svg viewBox="0 0 24 24" className="w-5 h-5 text-text-dark fill-current">
@@ -31,10 +37,48 @@ export const Navbar = () => {
                 </Button>
             </div>
 
-            {/* Mobile Menu Placeholder */}
-            <div className="md:hidden">
-                <Button variant="secondary" className="!px-3 !py-1 text-[10px]">Menu</Button>
+            {/* Mobile Menu Toggle */}
+            <div className="md:hidden z-50 relative">
+                <button
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    className="flex flex-col items-end justify-center gap-[6px] w-8 h-8 focus:outline-none"
+                >
+                    <span className={`block w-6 h-[2px] bg-white transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-[8px]' : ''}`} />
+                    <span className={`block w-4 h-[2px] bg-white transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`} />
+                    <span className={`block w-6 h-[2px] bg-white transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-[8px]' : ''}`} />
+                </button>
             </div>
+
+            {/* Mobile Menu Overlay */}
+            <AnimatePresence>
+                {isMobileMenuOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                        className="fixed inset-0 z-40 bg-bg-dark/95 backdrop-blur-xl flex flex-col items-center justify-center md:hidden"
+                    >
+                        <div className="flex flex-col items-center gap-8">
+                            {['Shop', 'About', 'Blog', 'Locations', 'Contact'].map((item) => (
+                                <Link
+                                    key={item}
+                                    href={`#${item.toLowerCase()}`}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className="text-white text-2xl font-alfa uppercase tracking-wider hover:text-brown-primary transition-colors"
+                                >
+                                    {item}
+                                </Link>
+                            ))}
+                            <Link href="#order" onClick={() => setIsMobileMenuOpen(false)}>
+                                <Button variant="secondary" className="!px-8 !py-3 text-sm mt-4">
+                                    Order Online
+                                </Button>
+                            </Link>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </nav>
     );
 };

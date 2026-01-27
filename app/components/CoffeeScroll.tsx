@@ -175,19 +175,21 @@ const OverlayText = ({
     const y = useTransform(progress, [range[0], range[0] + 0.05, range[1] - 0.05, range[1]], [20, 0, 0, -20]);
 
     // Positioning Classes
-    let positionClasses = "left-12 md:left-24 items-start text-left";
-    if (position === "center") positionClasses = "left-1/2 -translate-x-1/2 items-center text-center";
-    if (position === "right") positionClasses = "right-12 md:right-24 items-end text-right";
+    // Mobile: Always center text or use smaller margins. 
+    // Defaulting to slightly different mobile positions but keeping directional intent where possible.
+    let positionClasses = "left-6 md:left-24 items-start text-left";
+    if (position === "center") positionClasses = "left-1/2 -translate-x-1/2 items-center text-center w-full px-6";
+    if (position === "right") positionClasses = "right-6 md:right-24 items-end text-right";
 
     return (
         <motion.div
             style={{ opacity, y }}
-            className={`absolute top-1/2 -translate-y-1/2 flex flex-col pointer-events-none z-10 max-w-lg ${positionClasses}`}
+            className={`absolute top-1/2 -translate-y-1/2 flex flex-col pointer-events-none z-10 max-w-[90%] md:max-w-lg ${positionClasses}`}
         >
-            <h2 className="text-5xl md:text-7xl font-medium tracking-tight text-white/90 mb-4 font-sans leading-tight">{title}</h2>
-            <p className="text-xl md:text-2xl text-white/60 font-light tracking-wide leading-relaxed">{sub}</p>
+            <h2 className="text-3xl md:text-5xl lg:text-7xl font-medium tracking-tight text-white/90 mb-3 md:mb-4 font-sans leading-tight shadow-black/50 drop-shadow-lg">{title}</h2>
+            <p className="text-lg md:text-xl lg:text-2xl text-white/80 font-light tracking-wide leading-relaxed drop-shadow-md">{sub}</p>
             {isCta && (
-                <div className="mt-8 px-8 py-4 border border-white/20 rounded-full text-white/80 text-sm uppercase tracking-widest bg-white/5 backdrop-blur-sm">
+                <div className="mt-6 md:mt-8 px-6 md:px-8 py-3 md:py-4 border border-white/20 rounded-full text-white/90 text-xs md:text-sm uppercase tracking-widest bg-white/10 backdrop-blur-sm pointer-events-auto cursor-pointer hover:bg-white/20 transition-colors">
                     Enjoy
                 </div>
             )}
