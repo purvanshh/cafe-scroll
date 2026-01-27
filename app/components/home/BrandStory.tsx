@@ -29,6 +29,7 @@ export const BrandStory = () => {
                         src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1000&auto=format&fit=crop"
                         alt="Interior of a warm cafe with wooden tables and soft lighting"
                         fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
                         className="object-cover"
                     />
                     <div className="absolute inset-0 bg-bg-dark/50"></div>
