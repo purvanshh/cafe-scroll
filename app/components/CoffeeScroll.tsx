@@ -36,9 +36,9 @@ export const CoffeeScroll = () => {
 
             for (let i = 1; i <= FRAME_COUNT; i++) {
                 const img = new Image();
-                // Construct filename: ezgif-frame-001.jpg ... ezgif-frame-240.jpg
+                // Construct filename: ezgif-frame-001.webp ... ezgif-frame-218.webp
                 const paddedIndex = i.toString().padStart(3, '0');
-                img.src = `/silent-ocean-frames/ezgif-frame-${paddedIndex}.jpg`;
+                img.src = `/silent-ocean-frames/ezgif-frame-${paddedIndex}.webp`;
 
                 await new Promise((resolve) => {
                     img.onload = () => {
