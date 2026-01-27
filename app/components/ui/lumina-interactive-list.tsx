@@ -46,10 +46,10 @@ export function Component() {
         const slides = [
             { title: "Pure Extraction", description: "Precision brewing for the perfect cup.", media: "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=2671&auto=format&fit=crop" },
             { title: "Artisan Roast", description: "Small batches, mastered daily.", media: "https://images.unsplash.com/photo-1447933601403-0c6688de566e?q=80&w=2561&auto=format&fit=crop" },
-            { title: "Cold Brew", description: "Steeped for 24 hours of smoothness.", media: "https://images.unsplash.com/photo-1461023058943-7167f5912429?q=80&w=2670&auto=format&fit=crop" },
+            { title: "Cold Brew", description: "Steeped for 24 hours of smoothness.", media: "https://images.unsplash.com/photo-1504630083234-14187a9df0f5?q=80&w=2670&auto=format&fit=crop" },
             { title: "Morning Light", description: "Start your day with golden perfection.", media: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop" },
             { title: "Espresso Art", description: "A canvas of crema and contrast.", media: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=2574&auto=format&fit=crop" },
-            { title: "Bean Journey", description: "From farm to cup, handled with care.", media: "https://images.unsplash.com/photo-1541167760496-1628856ab772?q=80&w=2670&auto=format&fit=crop" }
+            { title: "Bean Journey", description: "From farm to cup, handled with care.", media: "https://images.unsplash.com/photo-1559496417-e7f25cb247f3?q=80&w=2574&auto=format&fit=crop" }
         ];
 
         // --- SHADERS ---
@@ -352,6 +352,18 @@ export function Component() {
         // Start everything
         initRenderer();
 
+        // Arrow button handlers
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        prevBtn?.addEventListener('click', () => {
+            const prevIndex = (currentSlideIndex - 1 + slides.length) % slides.length;
+            navigateToSlide(prevIndex);
+        });
+        nextBtn?.addEventListener('click', () => {
+            const nextIndex = (currentSlideIndex + 1) % slides.length;
+            navigateToSlide(nextIndex);
+        });
+
         // Listeners
         const handleVis = () => document.hidden ? stopAutoSlideTimer() : (!isTransitioning && safeStartTimer());
         const handleResize = () => {
@@ -383,15 +395,27 @@ export function Component() {
                     <p className="slide-description text-sm md:text-base text-white/70 max-w-sm" id="mainDesc"></p>
                 </div>
 
-                <nav className="slides-navigation absolute bottom-8 right-8 z-20 flex flex-col gap-4 text-xs tracking-widest" id="slidesNav"></nav>
+                <nav className="slides-navigation absolute bottom-8 right-8 z-20 flex flex-col gap-3 text-sm tracking-widest" id="slidesNav"></nav>
+
+                {/* Arrow Buttons */}
+                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-4" id="arrowNav">
+                    <button className="arrow-btn w-12 h-12 rounded-full border border-white/30 flex items-center justify-center hover:bg-white/10 transition-colors" id="prevBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    <button className="arrow-btn w-12 h-12 rounded-full border border-white/30 flex items-center justify-center hover:bg-white/10 transition-colors" id="nextBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+                </div>
             </main>
             {/* Scope styles */}
             <style jsx global>{`
-        .slide-nav-item { cursor: pointer; display: flex; align-items: center; justify-content: flex-end; gap: 10px; opacity: 0.5; transition: opacity 0.3s; }
+        .slide-nav-item { cursor: pointer; display: flex; align-items: center; justify-content: flex-end; gap: 12px; opacity: 0.5; transition: opacity 0.3s; padding: 6px 0; }
         .slide-nav-item:hover, .slide-nav-item.active { opacity: 1; }
-        .slide-progress-line { width: 30px; height: 1px; background: rgba(255,255,255,0.2); position: relative; }
-        .slide-progress-fill { height: 100%; background: #fff; width: 0%; position: absolute; left: 0; top: 0; }
+        .slide-progress-line { width: 40px; height: 2px; background: rgba(255,255,255,0.2); position: relative; border-radius: 1px; }
+        .slide-progress-fill { height: 100%; background: #fff; width: 0%; position: absolute; left: 0; top: 0; border-radius: 1px; }
+        .slide-nav-item.active .slide-progress-fill { width: 100%; transition: width 0.3s ease; }
         .slide-title span { display: inline-block; }
+        .slide-nav-title { font-size: 14px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; }
       `}</style>
         </div>
     );
