@@ -87,14 +87,14 @@ const teamCards = teamData.ids.map((memberId: string, index: number) => {
 
 export const Team = () => {
     return (
-        <section className="bg-bg-dark py-24 md:py-32">
-            <div className="max-w-7xl mx-auto px-6 md:px-12">
+        <section className="bg-bg-dark py-16 sm:py-20 md:py-24 lg:py-32">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
                 {/* Section Header */}
-                <div className="text-center mb-8">
-                    <h2 className="text-4xl md:text-5xl lg:text-6xl text-text-light font-alfa mb-4">
+                <div className="text-center mb-6 sm:mb-8">
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-text-light font-alfa mb-3 sm:mb-4">
                         Meet The Team
                     </h2>
-                    <p className="text-text-light/70 text-lg md:text-xl font-source max-w-2xl mx-auto">
+                    <p className="text-text-light/70 text-base sm:text-lg md:text-xl font-source max-w-2xl mx-auto px-2">
                         The passionate people behind every perfect cup at Brussels Brewery
                     </p>
                 </div>

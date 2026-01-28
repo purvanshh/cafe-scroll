@@ -127,13 +127,13 @@ export const Features = () => {
     }, [isLoaded, images, frameIndex]);
 
     return (
-        <section ref={containerRef} className="relative h-[400vh] bg-bg-dark">
+        <section ref={containerRef} className="relative h-[300vh] sm:h-[350vh] md:h-[400vh] bg-bg-dark">
             {/* Sticky container for the animation */}
             <div className="sticky top-0 h-screen w-full overflow-hidden">
                 {/* Loading state */}
                 {!isLoaded && (
-                    <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-bg-dark">
-                        <div className="w-48 h-1 bg-white/10 rounded-full overflow-hidden">
+                    <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-bg-dark px-4">
+                        <div className="w-full max-w-[200px] h-1 bg-white/10 rounded-full overflow-hidden">
                             <motion.div
                                 className="h-full bg-blue-primary rounded-full"
                                 style={{ width: `${loadProgress}%` }}
@@ -150,31 +150,31 @@ export const Features = () => {
                         className={`w-full h-full object-cover ${isLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}
                         style={{ width: '100%', height: '100%' }}
                     />
-                    {/* Gradient overlay for better text readability */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-bg-dark/50 via-bg-dark/20 to-transparent" />
+                    {/* Gradient overlay for better text readability - responsive gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-bg-dark/70 via-bg-dark/30 to-transparent sm:from-bg-dark/50 sm:via-bg-dark/20" />
                 </div>
 
                 {/* Text Content Overlay */}
                 <motion.div
-                    className="absolute inset-0 z-10 flex items-center pointer-events-none"
+                    className="absolute inset-0 z-10 flex items-end sm:items-center pb-16 sm:pb-0 pointer-events-none"
                     style={{ opacity: textOpacity }}
                 >
-                    <div className="max-w-7xl mx-auto px-6 md:px-12 w-full">
+                    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
                         <motion.div
-                            className="flex flex-col gap-6 items-start max-w-xl"
+                            className="flex flex-col gap-4 sm:gap-6 items-start max-w-full sm:max-w-xl"
                             style={{ y: textY }}
                         >
-                            <h2 className="text-4xl md:text-5xl lg:text-6xl text-text-light font-alfa leading-tight">
+                            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-text-light font-alfa leading-tight">
                                 Crafted With
                                 <br />
                                 <span className="text-blue-primary">Passion</span>
                             </h2>
-                            <p className="text-text-light/70 text-lg md:text-xl leading-relaxed font-source">
+                            <p className="text-text-light/70 text-base sm:text-lg md:text-xl leading-relaxed font-source max-w-[90%] sm:max-w-none">
                                 Our organically grown coffee beans are roasted over an open flame in a one-of-a-kind, brick roaster. There&apos;s nothing quite like a cup of Brussels Brewery coffee.
                             </p>
                             <Button
                                 variant="outline"
-                                className="!text-text-light !border-text-light/30 hover:!bg-text-light hover:!text-bg-dark pointer-events-auto"
+                                className="!text-text-light !border-text-light/30 hover:!bg-text-light hover:!text-bg-dark pointer-events-auto min-h-[44px] px-6"
                             >
                                 View our menu &rarr;
                             </Button>
