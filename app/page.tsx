@@ -7,6 +7,7 @@ import { ProductShowcase } from "./components/home/ProductShowcase";
 import { Shop } from "./components/home/Shop";
 import { About } from "./components/home/About";
 import { Blog } from "./components/home/Blog";
+import { Team } from "./components/home/Team";
 
 export default function Home() {
   return (
@@ -17,6 +18,7 @@ export default function Home() {
       <Shop />
       <BrandStory />
       <About />
+      <Team />
       <Gallery />
       <Blog />
       <Locations />

@@ -1,23 +1,5 @@
 import Image from 'next/image';
 
-const teamMembers = [
-    {
-        name: "Elena Rodriguez",
-        role: "Head Roaster",
-        image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=600&auto=format&fit=crop"
-    },
-    {
-        name: "Marcus Chen",
-        role: "Master Barista",
-        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=600&auto=format&fit=crop"
-    },
-    {
-        name: "Sarah Williams",
-        role: "Sourcing Director",
-        image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=600&auto=format&fit=crop"
-    }
-];
-
 const values = [
     { title: "Sustainability", description: "Every bean is ethically sourced from farmers we know by name." },
     { title: "Quality", description: "Small-batch roasting ensures peak freshness in every cup." },
@@ -56,7 +38,7 @@ export const About = () => {
                 </div>
 
                 {/* Values Section */}
-                <div className="mb-24">
+                <div>
                     <h3 className="text-3xl md:text-4xl font-alfa text-text-light text-center mb-12">
                         What We Stand For
                     </h3>
@@ -65,30 +47,6 @@ export const About = () => {
                             <div key={index} className="text-center p-8 border border-white/10 rounded-2xl hover:border-brown-primary/50 transition-colors">
                                 <h4 className="text-2xl font-alfa text-text-light mb-4">{value.title}</h4>
                                 <p className="text-text-light/60 font-source">{value.description}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Team Section */}
-                <div>
-                    <h3 className="text-3xl md:text-4xl font-alfa text-text-light text-center mb-12">
-                        Meet the Team
-                    </h3>
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {teamMembers.map((member, index) => (
-                            <div key={index} className="group text-center">
-                                <div className="relative w-48 h-48 mx-auto mb-6 rounded-full overflow-hidden border-4 border-brown-primary/30 group-hover:border-brown-primary transition-colors">
-                                    <Image
-                                        src={member.image}
-                                        alt={member.name}
-                                        fill
-                                        sizes="192px"
-                                        className="object-cover"
-                                    />
-                                </div>
-                                <h4 className="text-xl font-bold text-text-light font-archivo">{member.name}</h4>
-                                <p className="text-text-light/60 font-source">{member.role}</p>
                             </div>
                         ))}
                     </div>
